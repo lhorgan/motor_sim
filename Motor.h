@@ -23,13 +23,34 @@ public:
         this->targetRPS = targetRPS;
     }
 
+private:
+    double angle;
+    double rps;
+    double targetRPS;
+    double targetAcceleration;
+    double aNoise;
+    double homeTol;
+
+    bool running;
+    std::atomic<bool> home;
+
+    double getCurrentA() {
+        double noiseDir = rand() % 2 == 0 ? -1.0 : 1.0;
+        return targetAcceleration + (aNoise * noiseDir);
+    }
+
+    double getIntrinsicA() {
+        return 1.0; // 1 rps/s
+    }
+
     void run() {
         long long usToS = 1000000;
-
+        
+        auto start = std::chrono::high_resolution_clock::now();
         while(running) {
-            auto start = std::chrono::high_resolution_clock::now();
             auto elapsed = std::chrono::high_resolution_clock::now() - start;
             long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+            start = std::chrono::high_resolution_clock::now();
 
             double newAngle = ((this->rps * microseconds) / usToS) * 360.0;
             double currentSpeed = (newAngle - angle) / (microseconds / usToS);
@@ -50,26 +71,8 @@ public:
             if(angle >= 360 - homeTol || angle < homeTol) {
                 home = true;
             }
+
+            std::this_thread::sleep_for(std::chrono::microseconds(1));
         }
-    }
-
-private:
-    double angle;
-    double rps;
-    double targetRPS;
-    double targetAcceleration;
-    double aNoise;
-    double homeTol;
-
-    bool running;
-    std::atomic<bool> home;
-
-    double getCurrentA() {
-        double noiseDir = rand() % 2 == 0 ? -1.0 : 1.0;
-        return targetAcceleration + (aNoise * noiseDir);
-    }
-
-    double getIntrinsicA() {
-        return 1.0; // 1 rps/s
     }
 };

@@ -1,0 +1,6 @@
+class Backlight {
+public:
+    Backlight() {
+
+    }
+};

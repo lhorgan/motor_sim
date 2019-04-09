@@ -1,3 +1,6 @@
+#ifndef BACKLIGHT_H_INCLUDED
+#define BACKLIGHT_H_INCLUDED
+
 #include <chrono>
 #include <ctime>
 #include <stdlib.h> 
@@ -6,8 +9,17 @@
 
 class Backlight {
 public:
-    Backlight() {
+    Backlight(double refreshRate, double refreshNoise=0) {
+        this->refreshRate = refreshRate;
+        this->refreshNoise = refreshNoise;
+
         white = true;
+        startFrame = true;
+        runThread.reset(new std::thread(&run, this));
+    }
+
+    ~Backlight() {
+        runThread->join();
     }
 
     bool isWhite() {
@@ -43,6 +55,7 @@ public:
             std::this_thread::sleep_for(std::chrono::microseconds(1));
         }
     }
+    std::unique_ptr<std::thread> runThread;
 
 private:
     double refreshRate; // fps
@@ -53,3 +66,5 @@ private:
     
     bool running;
 };
+
+#endif

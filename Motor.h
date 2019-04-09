@@ -1,7 +1,11 @@
+#ifndef MOTOR_H_INCLUDED
+#define MOTOR_H_INCLUDED
+
 #include <chrono>
 #include <ctime>
 #include <stdlib.h> 
 #include <atomic>
+#include <thread>
 
 class Motor {
 public:
@@ -17,10 +21,16 @@ public:
         if(startAngle >= 360 - homeTol || startAngle < homeTol) {
             home = true;
         }
+
+        runThread.reset(new std::thread(&run, this));
     }
 
     void setSpeed(double targetRPS) {
         this->targetRPS = targetRPS;
+    }
+
+    ~Motor() {
+        runThread->join();
     }
 
 private:
@@ -75,4 +85,7 @@ private:
             std::this_thread::sleep_for(std::chrono::microseconds(1));
         }
     }
+    std::unique_ptr<std::thread> runThread;
 };
+
+#endif

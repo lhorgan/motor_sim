@@ -12,6 +12,7 @@ public:
     Backlight(double refreshRate, double refreshNoise=0) {
         this->refreshRate = refreshRate;
         this->refreshNoise = refreshNoise;
+        startFrameFreq = 16;
 
         white = true;
         startFrame = true;

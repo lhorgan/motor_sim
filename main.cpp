@@ -10,8 +10,8 @@ signal home every 16th (240/15) MONITOR frame to keep motor and monitor in sync
 THE ACTUAL ALGORITHM
 PART A:
 -if homes are ALMOST synced and speed is within tolerance:
-    -If motor homed AFTER the monitor home signal, slow down
-    -If motor homed BEFORE the monitor home signal, speed up
+    -If motor homed AFTER the monitor home signal, speed up
+    -If motor homed BEFORE the monitor home signal, slown down
     -If time between motor home and monitor home is too great, do part B
 -if speed is not within tolerance, do Part B
 

@@ -14,8 +14,10 @@ class Arduino {
 public:
     Arduino() {
         this->motor.reset(new Motor(10, 0.01, 0, 1.0));
-        this->backlight.reset(new Backlight(3, 0));
+        this->backlight.reset(new Backlight(240, 0));
         
+        setup();
+
         running = true;
         runThread.reset(new std::thread(&Arduino::run, this));
     }
@@ -36,17 +38,13 @@ private:
             std::this_thread::sleep_for(std::chrono::nanoseconds(63)); // Arduino runs at 12.5Mhz
         }
     }
+    
+
+    void setup() {
+
+    }
 
     void loop() {
-        /*if(this->motor->isHome()) {
-            printf("HOME\n");
-        }
-        if(this->backlight->isWhite()) {
-            printf("WHITE!\n");
-        }
-        else {
-            printf("BLACK!\n");
-        }*/
     }
 };
 

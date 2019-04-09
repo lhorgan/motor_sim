@@ -15,6 +15,8 @@ public:
 
         white = true;
         startFrame = true;
+
+        running = true;
         runThread.reset(new std::thread(&Backlight::run, this));
     }
 
@@ -35,24 +37,28 @@ public:
         unsigned long long currFrame = 0;
 
         auto start = std::chrono::high_resolution_clock::now();
+        double effectiveFPS = refreshRate;
+
         while(running) {
             auto elapsed = std::chrono::high_resolution_clock::now() - start;
             long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
 
-            double noise = (double)((double)(rand() % 10000) / 10000.0) * refreshNoise;
-            noise = rand() % 2 == 0 ? -1 * noise : noise;
-            double effectiveFPS = refreshRate + noise;
-
             if(microseconds >= (long long)((double)usToS / effectiveFPS)) {
+                //printf("NEW FRAME!\n");
                 start = std::chrono::high_resolution_clock::now();
+                
+                double noise = (double)((double)(rand() % 10000) / 10000.0) * refreshNoise;
+                noise = rand() % 2 == 0 ? -1 * noise : noise;
+                effectiveFPS = refreshRate + noise;
+
                 white = !white;
-                if(currFrame % startFrameFreq == 0) {
+                if(++currFrame == startFrameFreq) {
                     startFrame = true;
+                    currFrame = 0;
                 }
                 else {
                     startFrame = false;
                 }
-                currFrame++;
             }
 
             std::this_thread::sleep_for(std::chrono::microseconds(1));

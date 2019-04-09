@@ -47,10 +47,43 @@ private:
         }
     }    
 
+    long long lastMotorHomeTime;
+    long long lastFrameChangeTime;
+    long long lastStartFrameTime;
+    bool motorHome;
+
     void setup() {
+        lastMotorHomeTime = 0;
+        lastFrameChangeTime = 0;
+        lastStartFrameTime = 0;
+        motorHome = false;
     }
 
     void loop() {
+        long long currTime = micros();
+
+        if(isMotorHome() != motorHome) {
+            if(!motorHome) { // well, now we know the motor IS home
+                int timeDelta = currTime - lastMotorHomeTime;
+                
+            }
+            motorHome = !motorHome;
+        }
+    }
+
+    /**
+    * these will all need to be implemented in real Arduino code
+    **/
+    bool isMotorHome() {
+        return this->motor->isHome();
+    }
+
+    bool isFrameWhite() {
+        return this->backlight->isWhite();
+    }
+
+    bool isStartFrame() {
+        return this->backlight->isStartFrame();
     }
 };
 
